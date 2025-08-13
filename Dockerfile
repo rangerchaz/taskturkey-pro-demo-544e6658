@@ -21,28 +21,25 @@ FROM nginx:alpine
 # Remove default nginx files
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy the entire app to nginx
-COPY --from=builder /app /tmp/app
+# Copy the entire app maintaining directory structure
+COPY --from=builder /app /usr/share/nginx/html/
 
-# Copy all files to nginx html directory
-RUN cp -r /tmp/app/* /usr/share/nginx/html/ 2>/dev/null || true && \
-    cp -r /tmp/app/build/* /usr/share/nginx/html/ 2>/dev/null || true && \
-    cp -r /tmp/app/dist/* /usr/share/nginx/html/ 2>/dev/null || true && \
-    cp -r /tmp/app/frontend-app/build/* /usr/share/nginx/html/ 2>/dev/null || true
+# Also try copying from build directories if they exist
+RUN cp -r /usr/share/nginx/html/build/* /usr/share/nginx/html/ 2>/dev/null || true && \
+    cp -r /usr/share/nginx/html/dist/* /usr/share/nginx/html/ 2>/dev/null || true && \
+    cp -r /usr/share/nginx/html/frontend-app/build/* /usr/share/nginx/html/ 2>/dev/null || true
 
 # Set your HTML file as the main index
 RUN if [ -f /usr/share/nginx/html/mockup-1.html ]; then \
       cp /usr/share/nginx/html/mockup-1.html /usr/share/nginx/html/index.html; \
     fi
 
-# Copy all CSS, JS, and asset files
-RUN find /tmp/app -type f \( -name "*.css" -o -name "*.js" -o -name "*.png" -o -name "*.jpg" -o -name "*.svg" -o -name "*.ico" \) -exec cp {} /usr/share/nginx/html/ \; 2>/dev/null || true
+# Create system directory and move CSS files there if needed
+RUN mkdir -p /usr/share/nginx/html/system && \
+    find /usr/share/nginx/html -maxdepth 1 -name "*.css" -exec cp {} /usr/share/nginx/html/system/ \; 2>/dev/null || true
 
 # Show what files we have
-RUN echo "Files in nginx directory:" && ls -la /usr/share/nginx/html/
-
-# Clean up
-RUN rm -rf /tmp/app
+RUN echo "Files in nginx directory:" && find /usr/share/nginx/html -type f -name "*.css" -o -name "*.html" | head -20
 
 # Custom nginx config
 RUN echo 'server { \
