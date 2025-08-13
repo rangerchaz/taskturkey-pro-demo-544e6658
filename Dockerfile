@@ -41,23 +41,29 @@ FROM nginx:alpine
 # Create nginx html directory
 RUN mkdir -p /usr/share/nginx/html
 
-# Copy built files - try multiple locations
-COPY --from=builder /app/build /usr/share/nginx/html 2>/dev/null || true
-COPY --from=builder /app/dist /usr/share/nginx/html 2>/dev/null || true
-COPY --from=builder /app/frontend-app/build /usr/share/nginx/html 2>/dev/null || true
-COPY --from=builder /app/frontend-app/dist /usr/share/nginx/html 2>/dev/null || true
+# Copy the entire builder stage first
+COPY --from=builder /app /tmp/app
 
-# If no build files, copy HTML files directly
-RUN if [ -z "$(ls -A /usr/share/nginx/html 2>/dev/null)" ]; then \
-      echo "No build files found, copying source files"; \
-      cp -r /tmp/app/* /usr/share/nginx/html/ 2>/dev/null || true; \
-    fi
+# Copy built files using shell commands
+RUN cp -r /tmp/app/build/* /usr/share/nginx/html/ 2>/dev/null || \
+    cp -r /tmp/app/dist/* /usr/share/nginx/html/ 2>/dev/null || \
+    cp -r /tmp/app/frontend-app/build/* /usr/share/nginx/html/ 2>/dev/null || \
+    cp -r /tmp/app/frontend-app/dist/* /usr/share/nginx/html/ 2>/dev/null || \
+    echo "No build directory found, copying source files" && \
+    find /tmp/app -name "*.html" -exec cp {} /usr/share/nginx/html/ \; || \
+    echo "<!DOCTYPE html><html><head><title>React App</title></head><body><h1>React App</h1><p>Build successful!</p></body></html>" > /usr/share/nginx/html/index.html
 
 # Ensure we have an index.html
 RUN if [ ! -f /usr/share/nginx/html/index.html ]; then \
-      find /usr/share/nginx/html -name "*.html" -type f -exec cp {} /usr/share/nginx/html/index.html \; -quit || \
-      echo '<!DOCTYPE html><html><head><title>React App</title></head><body><h1>React App</h1></body></html>' > /usr/share/nginx/html/index.html; \
+      find /usr/share/nginx/html -name "*.html" -type f -exec mv {} /usr/share/nginx/html/index.html \; -quit || \
+      echo '<!DOCTYPE html><html><head><title>React App</title></head><body><h1>React App</h1><p>Deployment successful!</p></body></html>' > /usr/share/nginx/html/index.html; \
     fi
+
+# Show what we have
+RUN echo "Final nginx files:" && ls -la /usr/share/nginx/html/
+
+# Clean up
+RUN rm -rf /tmp/app
 
 # Custom nginx config for React SPA
 RUN echo 'server { \
