@@ -3,75 +3,58 @@ FROM node:18-alpine as builder
 
 WORKDIR /app
 
-# Copy all files first to find package.json
+# Copy all files
 COPY . .
 
-# Find and use package.json from the correct location
+# Find package.json and install if exists
 RUN if [ -f package.json ]; then \
-      echo "Found package.json in root"; \
+      npm install && npm run build; \
     elif [ -f frontend-app/package.json ]; then \
-      echo "Found package.json in frontend-app/"; \
-      cd frontend-app; \
-    elif [ -f src/package.json ]; then \
-      echo "Found package.json in src/"; \
-      cd src; \
+      cd frontend-app && npm install && npm run build; \
     else \
-      echo "No package.json found, creating basic one"; \
-      echo '{"name":"react-app","scripts":{"build":"echo build complete"}}' > package.json; \
-    fi
-
-# Install dependencies if package.json exists
-RUN if [ -f package.json ]; then npm install; fi
-RUN if [ -f frontend-app/package.json ]; then cd frontend-app && npm install; fi
-
-# Build the React app
-RUN if [ -f package.json ] && grep -q '"build"' package.json; then \
-      npm run build; \
-    elif [ -f frontend-app/package.json ]; then \
-      cd frontend-app && npm run build; \
-    else \
-      echo "No build script found, creating static files"; \
-      mkdir -p build; \
-      find . -name "*.html" -exec cp {} build/ \; || true; \
+      echo "No package.json found - treating as static files"; \
     fi
 
 # Production stage
 FROM nginx:alpine
 
-# Create nginx html directory
-RUN mkdir -p /usr/share/nginx/html
+# Remove default nginx files
+RUN rm -rf /usr/share/nginx/html/*
 
-# Copy the entire builder stage first
+# Copy the entire app to nginx
 COPY --from=builder /app /tmp/app
 
-# Copy built files using shell commands
-RUN cp -r /tmp/app/build/* /usr/share/nginx/html/ 2>/dev/null || \
-    cp -r /tmp/app/dist/* /usr/share/nginx/html/ 2>/dev/null || \
-    cp -r /tmp/app/frontend-app/build/* /usr/share/nginx/html/ 2>/dev/null || \
-    cp -r /tmp/app/frontend-app/dist/* /usr/share/nginx/html/ 2>/dev/null || \
-    echo "No build directory found, copying source files" && \
-    find /tmp/app -name "*.html" -exec cp {} /usr/share/nginx/html/ \; || \
-    echo "<!DOCTYPE html><html><head><title>React App</title></head><body><h1>React App</h1><p>Build successful!</p></body></html>" > /usr/share/nginx/html/index.html
+# Copy all files to nginx html directory
+RUN cp -r /tmp/app/* /usr/share/nginx/html/ 2>/dev/null || true && \
+    cp -r /tmp/app/build/* /usr/share/nginx/html/ 2>/dev/null || true && \
+    cp -r /tmp/app/dist/* /usr/share/nginx/html/ 2>/dev/null || true && \
+    cp -r /tmp/app/frontend-app/build/* /usr/share/nginx/html/ 2>/dev/null || true
 
-# Ensure we have an index.html
-RUN if [ ! -f /usr/share/nginx/html/index.html ]; then \
-      find /usr/share/nginx/html -name "*.html" -type f -exec mv {} /usr/share/nginx/html/index.html \; -quit || \
-      echo '<!DOCTYPE html><html><head><title>React App</title></head><body><h1>React App</h1><p>Deployment successful!</p></body></html>' > /usr/share/nginx/html/index.html; \
+# Set your HTML file as the main index
+RUN if [ -f /usr/share/nginx/html/mockup-1.html ]; then \
+      cp /usr/share/nginx/html/mockup-1.html /usr/share/nginx/html/index.html; \
     fi
 
-# Show what we have
-RUN echo "Final nginx files:" && ls -la /usr/share/nginx/html/
+# Copy all CSS, JS, and asset files
+RUN find /tmp/app -type f \( -name "*.css" -o -name "*.js" -o -name "*.png" -o -name "*.jpg" -o -name "*.svg" -o -name "*.ico" \) -exec cp {} /usr/share/nginx/html/ \; 2>/dev/null || true
+
+# Show what files we have
+RUN echo "Files in nginx directory:" && ls -la /usr/share/nginx/html/
 
 # Clean up
 RUN rm -rf /tmp/app
 
-# Custom nginx config for React SPA
+# Custom nginx config
 RUN echo 'server { \
   listen 80; \
   root /usr/share/nginx/html; \
   index index.html; \
   location / { \
     try_files $uri $uri/ /index.html; \
+  } \
+  location ~* \.(css|js|png|jpg|jpeg|gif|ico|svg)$ { \
+    expires 1y; \
+    add_header Cache-Control "public, immutable"; \
   } \
 }' > /etc/nginx/conf.d/default.conf
 
