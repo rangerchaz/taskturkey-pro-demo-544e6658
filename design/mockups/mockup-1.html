@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskTurkey Pro - Dashboard</title>
+  <link rel="stylesheet" href="../system/tokens.css">
+  <link rel="stylesheet" href="../system/components.css">
+  <link rel="stylesheet" href="../system/animations.css">
+  <link rel="stylesheet" href="../system/layout.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Header -->
+    <header class="app-header nav">
+      <a href="#" class="nav-brand">TaskTurkey Pro</a>
+      <nav class="nav-menu">
+        <li class="nav-item"><a href="#" class="nav-link active">Dashboard</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Projects</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Team</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Analytics</a></li>
+      </nav>
+      <div class="flex items-center gap-3">
+        <div class="notification-indicator">
+          <button class="btn-secondary">🔔</button>
+        </div>
+        <div class="avatar">JD</div>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="app-sidebar">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link active">📊 Overview</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link">📋 My Tasks</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link">🏗️ Projects</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link">👥 Team Members</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link">📈 Reports</a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link">⚙️ Settings</a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="app-main">
+      <!-- Page Header -->
+      <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Welcome back! Here's what's happening with your projects.</p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-4 gap-6" style="margin-bottom: 2rem;">
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="task-meta">Active Tasks</p>
+              <p class="task-title" style="font-size: 1.875rem; margin-top: 0.5rem;">24</p>
+            </div>
+            <div class="badge badge-success">+12%</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="task-meta">Completed Today</p>
+              <p class="task-title" style="font-size: 1.875rem; margin-top: 0.5rem;">8</p>
+            </div>
+            <div class="badge badge-warning">+5%</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="task-meta">Team Members</p>
+              <p class="task-title" style="font-size: 1.875rem; margin-top: 0.5rem;">12</p>
+            </div>
+            <div class="badge badge-success">+2</div>
+          </div>
+        </div>
+        
+        <div class="card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="task-meta">Projects</p>
+              <p class="task-title" style="font-size: 1.875rem; margin-top: 0.5rem;">6</p>
+            </div>
+            <div class="badge badge-success">All Active</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="grid grid-cols-2 gap-8">
+        <!-- Recent Tasks -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Recent Tasks</h2>
+            <p class="card-subtitle">Latest activity from your team</p>
+          </div>
+          
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox">
+            <div class="task-content">
+              <h3 class="task-title">Update user authentication system</h3>
+              <p class="task-meta">Assigned to Alex Chen • Due tomorrow</p>
+            </div>
+            <div class="badge badge-warning">In Progress</div>
+          </div>
+          
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox" checked>
+            <div class="task-content">
+              <h3 class="task-title">Design new dashboard layout</h3>
+              <p class="task-meta">Completed by Sarah Kim • 2 hours ago</p>
+            </div>
+            <div class="badge badge-success">Done</div>
+          </div>
+          
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox">
+            <div class="task-content">
+              <h3 class="task-title">Write API documentation</h3>
+              <p class="task-meta">Assigned to Mike Johnson • Due Friday</p>
+            </div>
+            <div class="badge badge-error">Overdue</div>
+          </div>
+          
+          <div class="task-item">
+            <input type="checkbox" class="task-checkbox">
+            <div class="task-content">
+              <h3 class="task-title">Review pull request #234</h3>
+              <p class="task-meta">Assigned to you • Due today</p>
+            </div>
+            <div class="badge badge-warning">Review</div>
+          </div>
+        </div>
+
+        <!-- Team Activity -->
+        <div class="card">
+          <div class="card-header">
+            <h2 class="card-title">Team Activity</h2>
+            <p class="card-subtitle">Real-time updates from your workspace</p>
+          </div>
+          
+          <div class="flex items-center gap-3" style="padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+            <div class="avatar">AC</div>
+            <div class="task-content">
+              <p class="task-title">Alex Chen completed "User Login Bug Fix"</p>
+              <p class="task-meta">3 minutes ago</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3" style="padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+            <div class="avatar">SK</div>
+            <div class="task-content">
+              <p class="task-title">Sarah Kim created new project "Mobile App Redesign"</p>
+              <p class="task-meta">15 minutes ago</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3" style="padding: 1rem 0; border-bottom: 1px solid var(--border-color);">
+            <div class="avatar">MJ</div>
+            <div class="task-content">
+              <p class="task-title">Mike Johnson commented on "Database Schema Update"</p>
+              <p class="task-meta">1 hour ago</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3" style="padding: 1rem 0;">
+            <div class="avatar">JD</div>
+            <div class="task-content">
+              <p class="task-title">You assigned "Code Review" to Alex Chen</p>
+              <p class="task-meta">2 hours ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex gap-4" style="margin-top: 2rem;">
+        <button class="btn-primary">+ New Task</button>
+        <button class="btn-secondary">Create Project</button>
+        <button class="btn-secondary">Invite Team Member</button>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Real-time update simulation
+    function simulateRealTimeUpdates() {
+      const indicators = document.querySelectorAll('.notification-indicator');
+      setInterval(() => {
+        indicators.forEach(indicator => {
+          indicator.style.display = Math.random() > 0.7 ? 'block' : 'block';
+        });
+      }, 5000);
+    }
+    
+    simulateRealTimeUpdates();
+  </script>
+</body>
+</html>

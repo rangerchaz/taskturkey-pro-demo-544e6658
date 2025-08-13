@@ -1,0 +1,19 @@
+{
+  "type": "static_site",
+  "deployment_strategy": "static_files",
+  "has_react": false,
+  "has_node_backend": false,
+  "has_react_native": false,
+  "has_expo": false,
+  "has_flutter": false,
+  "has_frontend_app": false,
+  "has_backend_api": false,
+  "frontend_package_json": false,
+  "backend_package_json": false,
+  "files": {
+    "frontend": 0,
+    "backend": 0,
+    "mobile": 0,
+    "design": 5
+  }
+}
